@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.WatchMeApp" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="AppBaseTheme" parent="android:Theme.Black.NoTitleBar.Fullscreen">
+        <item name="android:windowBackground">@color/icon_background</item>
+    </style>
+
+</resources>

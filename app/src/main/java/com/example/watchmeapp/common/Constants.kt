@@ -1,0 +1,8 @@
+package com.example.watchmeapp.common
+
+object Constants {
+
+    val access_token = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhODA5NDIxYzY0NmM4MWE4MmU0NTRlZDEwNWRlMDk0MiIsIm5iZiI6MTc2MDAyMjI2MC40OCwic3ViIjoiNjhlN2NlZjRhOWJjODUwNzI2NDFkZDM1Iiwic2NvcGVzIjpbImFwaV9yZWFkIl0sInZlcnNpb24iOjF9.SqJ2IUexWk6vGvsDX2I7fD42sAY4PY__wHdFV49yhIw"
+
+    val api_key = "a809421c646c81a82e454ed105de0942"
+}
