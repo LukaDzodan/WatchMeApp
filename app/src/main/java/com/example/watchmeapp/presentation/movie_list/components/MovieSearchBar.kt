@@ -1,6 +1,7 @@
 package com.example.watchmeapp.presentation.movie_list.components
 
 import android.graphics.drawable.Icon
+import androidx.activity.compose.BackHandler
 import com.example.watchmeapp.R
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
@@ -26,8 +27,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -42,8 +45,9 @@ fun MovieSearchBar(
     onSearchQueryChange: (String) -> Unit,
     onImeSearch: () -> Unit,
     modifier: Modifier = Modifier,
-
     ) {
+
+
     Row(
         modifier = Modifier
             .fillMaxWidth()

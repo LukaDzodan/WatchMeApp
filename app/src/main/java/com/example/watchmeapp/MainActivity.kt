@@ -45,19 +45,24 @@ class MainActivity : ComponentActivity() {
                         route = Screens.MovieListScreen.route
                     ) {
                         MovieListScreenRoot(
-                            onMovieClick = {
-                                navController.navigate(Screens.MovieDetailsScreen.route+"/${it.id}")
+                            onMovieClick = { movie,isSaved ->
+                                navController.navigate(Screens.MovieDetailsScreen.route+"/${movie.id}/$isSaved")
                             }
                         )
                     }
 
                     composable(
-                        route = Screens.MovieDetailsScreen.route+"/{id}",
+                        route = Screens.MovieDetailsScreen.route+"/{id}/{isSaved}",
                         arguments = listOf(
                             navArgument(
                                 name = "id"
                             ) {
                                 type = NavType.IntType
+                            },
+                            navArgument(
+                                name = "isSaved"
+                            ) {
+                                type = NavType.BoolType
                             }
                         )
                     ) {

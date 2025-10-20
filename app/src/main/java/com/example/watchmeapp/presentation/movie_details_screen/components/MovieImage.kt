@@ -20,7 +20,9 @@ import androidx.compose.material.icons.filled.Stars
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -37,15 +39,21 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.example.watchmeapp.ui.theme.BackGroundGrey
 import com.example.watchmeapp.ui.theme.SecondaryGreen
+import kotlinx.coroutines.launch
 
 @Composable
 fun MovieImage(
     imageUrl: String?,
-    onBackStack : () -> Unit,
-    onMovieSave : () -> Unit,
+    isMovieSaved: Boolean,
+    onBackStack: () -> Unit,
+    onMovieSave: () -> Unit,
+    onMovieDelete: () -> Unit,
+    showSnackBar : (String) -> Unit,
     scrollState: LazyListState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
+
+    val snackbarHostState = remember { SnackbarHostState() }
 
     val scrollOffSet = minOf(
         1f,
@@ -84,9 +92,10 @@ fun MovieImage(
                     )
                 )
         )
-
         IconButton(
-            onClick = { onBackStack() },
+            onClick = {
+                onBackStack()
+            },
             modifier = Modifier
                 .align(Alignment.TopStart)
                 .padding(12.dp)
@@ -99,18 +108,43 @@ fun MovieImage(
             )
         }
 
-        IconButton(
-            onClick = { onMovieSave()},
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(12.dp),
-        ) {
-            Icon(
-                imageVector = Icons.Default.StarOutline,
-                contentDescription = null,
-                tint = SecondaryGreen,
-                modifier = Modifier.size(50.dp)
-            )
+        when {
+
+            isMovieSaved == true -> {
+                IconButton(
+                    onClick = { onMovieDelete() },
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(12.dp),
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Star,
+                        contentDescription = null,
+                        tint = SecondaryGreen,
+                        modifier = Modifier.size(50.dp)
+                    )
+                }
+            }
+
+            else -> {
+                IconButton(
+                    onClick = { onMovieSave()
+                                showSnackBar("Movie is saved to the favorites list")
+                              },
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(12.dp),
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.StarOutline,
+                        contentDescription = null,
+                        tint = SecondaryGreen,
+                        modifier = Modifier.size(50.dp)
+                    )
+                }
+            }
+
         }
+
     }
 }

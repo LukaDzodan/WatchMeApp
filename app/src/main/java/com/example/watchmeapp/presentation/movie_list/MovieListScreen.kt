@@ -48,7 +48,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun MovieListScreenRoot(
     viewModel: MovieListViewModel = koinViewModel(),
-    onMovieClick: (Movie) -> Unit,
+    onMovieClick: (Movie, Boolean) -> Unit,
 ) {
     val state by viewModel.state.collectAsState()
 
@@ -67,7 +67,7 @@ fun MovieListScreenRoot(
         state = state,
         onActions = { action ->
             when (action) {
-                is MovieListActions.OnMovieClick -> onMovieClick(action.movie)
+                is MovieListActions.OnMovieClick -> onMovieClick(action.movie,action.isSaved)
                 else -> Unit
             }
             viewModel.onAction(action)
@@ -192,8 +192,10 @@ fun MovieListScreen(
 
                                         MovieList(
                                             movies = state.movies,
-                                            onMovieClick = {
-                                                onActions(MovieListActions.OnMovieClick(it))
+                                            onMovieClick = {movie ->
+                                                onActions(MovieListActions.OnMovieClick(movie, state.favouriteMovies.any {
+                                                    it.id == movie.id
+                                                }))
                                             },
                                             loadMore = {
                                                 onActions(MovieListActions.LoadMoreMovies)
@@ -222,8 +224,10 @@ fun MovieListScreen(
                                 else -> {
                                     MovieList(
                                         movies = state.favouriteMovies,
-                                        onMovieClick = {
-                                            onActions(MovieListActions.OnMovieClick(it))
+                                        onMovieClick = {movie ->
+                                            onActions(MovieListActions.OnMovieClick(movie, state.favouriteMovies.any {
+                                                it.id == movie.id
+                                            }))
                                         },
                                         loadMore = {},
                                         scrollState = scrollState

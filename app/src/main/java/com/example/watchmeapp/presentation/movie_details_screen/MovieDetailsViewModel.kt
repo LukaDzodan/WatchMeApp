@@ -7,9 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.watchmeapp.common.Resource
 import com.example.watchmeapp.domain.model.movie.Movie
-import com.example.watchmeapp.domain.model.movie_details.MovieDetails
 import com.example.watchmeapp.domain.repository.MovieRepository
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class MovieDetailsViewModel(
@@ -21,13 +19,16 @@ class MovieDetailsViewModel(
     val state: MutableState<MovieDetailsState> = _state
 
     val movieId = savedStateHandle.get<Int>("id")
-
+    val isMovieSaved = savedStateHandle.get<Boolean>("isSaved") == true
 
     init {
         movieId?.let {
             getMovieDetails(it)
         }
 
+        _state.value = _state.value.copy(
+            isMovieSaved = isMovieSaved
+        )
     }
 
     fun onAction(action: MovieDetailsActions) {
@@ -49,12 +50,15 @@ class MovieDetailsViewModel(
                             )
                         }
                     )
+                    _state.value = _state.value.copy(
+                        isMovieSaved = true
+                    )
                 }
             }
 
-            MovieDetailsActions.RemoveFromFavouriteClick -> {
+            MovieDetailsActions.DeleteFromFavouriteClick -> {
                 viewModelScope.launch {
-                    repository.insertFavoriteMovie(
+                    repository.deleteFavoriteMovie(
                         with(_state.value.movieDetails) {
                             Movie(
                                 id = id,
@@ -64,6 +68,9 @@ class MovieDetailsViewModel(
                                 vote_average = vote_average
                             )
                         }
+                    )
+                    _state.value = _state.value.copy(
+                        isMovieSaved = false
                     )
                 }
             }
