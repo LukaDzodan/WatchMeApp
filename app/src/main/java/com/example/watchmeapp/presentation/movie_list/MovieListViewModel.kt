@@ -32,51 +32,56 @@ class MovieListViewModel(
     private val _state = MutableStateFlow(MovieListState())
     val state = _state.asStateFlow()
 
-    companion object {
-        private var trandingMoviePage = 1
-        private var movieFromQueryPage = 1
-    }
+    private var trandingMoviePage = 1
+    private var movieFromQueryPage = 1
 
-    var trendingScrollPosition by mutableIntStateOf(0)
+
+    var trendingScrollIndex by mutableIntStateOf(0)
         private set
 
     var trendingScrollOffset by mutableIntStateOf(0)
         private set
 
-    var job : Job? = null
+    var favoriteScrollIndex by mutableIntStateOf(0)
+        private set
 
-    init{
+    var favoriteScrollOffset by mutableIntStateOf(0)
+        private set
+
+
+    var job: Job? = null
+
+    init {
         observeQuery()
         getFavoritesMovies()
     }
 
     fun observeQuery() {
-            state
-                .map { it.query }
-                .distinctUntilChanged()
-                .debounce(500)
-                .onEach { query ->
-                    job?.cancel()
-                    if(query.isBlank()){
-                        trandingMoviePage = 1
-                        _state.update {
-                            it.copy(
-                                movies = emptyList()
-                            )
-                        }
-                        job = getTradingMovies(trandingMoviePage)
-                    }else {
-                        movieFromQueryPage = 1
-                        _state.update {
-                            it.copy(
-                                movies = emptyList()
-                            )
-                        }
-                        job = getMoviesFromQuery(query)
+        state
+            .map { it.query }
+            .distinctUntilChanged()
+            .debounce(500)
+            .onEach { query ->
+                job?.cancel()
+                if (query.isBlank()) {
+                    trandingMoviePage = 1
+                    _state.update {
+                        it.copy(
+                            movies = emptyList()
+                        )
                     }
+                    job = getTradingMovies()
+                } else {
+                    movieFromQueryPage = 1
+                    _state.update {
+                        it.copy(
+                            movies = emptyList()
+                        )
+                    }
+                    job = getMoviesFromQuery(query)
                 }
-                .launchIn(viewModelScope)
-
+            }
+            .launchIn(viewModelScope)
     }
 
 
@@ -105,10 +110,10 @@ class MovieListViewModel(
             }
 
             is MovieListActions.LoadMoreMovies -> {
-                if(_state.value.query.isEmpty()){
+                if (_state.value.query.isEmpty()) {
                     trandingMoviePage++
-                    getTradingMovies(trandingMoviePage)
-                }else {
+                    getTradingMovies()
+                } else {
                     movieFromQueryPage++
                     getMoviesFromQuery(_state.value.query)
                 }
@@ -130,71 +135,94 @@ class MovieListViewModel(
 
     }
 
-    fun getTradingMovies(page: Int) = viewModelScope.launch{
+    fun getTradingMovies() = viewModelScope.launch {
 
-            _state.update {
-                it.copy(
-                    isLoading = true
-                )
-            }
-            delay(100L)
-            when (val response = repository.getTradingMovies(page)) {
-                is Resource.Error<*> -> {
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            errorMessage = response.message ?: "Unknown error"
-                        )
-                    }
+        _state.update {
+            it.copy(
+                isLoading = true,
+                errorMessage = ""
+            )
+        }
+        when (val response = repository.getTradingMovies(trandingMoviePage)) {
+            is Resource.Error<*> -> {
+                _state.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = response.message ?: "Unknown error"
+                    )
                 }
+            }
 
-                is Resource.Success<*> -> {
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            movies = (it.movies + response.data!!).distinctBy { it.id },
-                        )
-                    }
+            is Resource.Success<*> -> {
+                _state.update {
+                    it.copy(
+                        isLoading = false,
+                        movies = (it.movies + response.data!!).distinctBy { it.id },
+                    )
                 }
-                else -> Unit
             }
+
+            else -> Unit
+        }
     }
 
-    fun getMoviesFromQuery(query : String) = viewModelScope.launch{
+    fun getMoviesFromQuery(query: String) = viewModelScope.launch {
 
-            _state.update {
-                it.copy(
-                    isLoading = true
-                )
-            }
+        _state.update {
+            it.copy(
+                isLoading = true
+            )
+        }
 
-            when (val response = repository.getMovieFromQuery(movieFromQueryPage, query)) {
+        when (val response = repository.getMovieFromQuery(movieFromQueryPage, query)) {
 
-                is Resource.Success<*> -> {
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            errorMessage = "",
-                            movies = (it.movies + response.data!!).distinctBy { it.id },
-                        )
+            is Resource.Success<*> -> {
+
+                when {
+
+                    response.data.isNullOrEmpty() -> {
+                        _state.update {
+                            it.copy(
+                                isLoading = false,
+                                errorMessage = "Hmm… we can't seem to find that movie.",
+                                movies = emptyList(),
+                            )
+                        }
+                    }
+
+                    else -> {
+                        _state.update {
+                            it.copy(
+                                isLoading = false,
+                                errorMessage = "",
+                                movies = (it.movies + response.data).distinctBy { it.id },
+                            )
+                        }
                     }
                 }
-                is Resource.Error<*> -> {
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            errorMessage = response.message ?: "Unknown error"
-                        )
-                    }
-                }
-
-                else -> Unit
             }
+
+            is Resource.Error<*> -> {
+                _state.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = response.message ?: "Unknown error"
+                    )
+                }
+            }
+
+            else -> Unit
+        }
     }
 
-    fun saveScrollState(state: LazyGridState) {
-        trendingScrollPosition = state.firstVisibleItemIndex
+    fun saveTrendingScrollState(state: LazyGridState) {
+        trendingScrollIndex = state.firstVisibleItemIndex
         trendingScrollOffset = state.firstVisibleItemScrollOffset
+    }
+
+    fun saveFavoriteScrollState(state: LazyGridState) {
+        favoriteScrollIndex = state.firstVisibleItemIndex
+        favoriteScrollOffset = state.firstVisibleItemScrollOffset
     }
 
 }

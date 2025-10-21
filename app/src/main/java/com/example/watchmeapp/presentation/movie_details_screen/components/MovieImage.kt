@@ -53,7 +53,6 @@ fun MovieImage(
     modifier: Modifier = Modifier,
 ) {
 
-    val snackbarHostState = remember { SnackbarHostState() }
 
     val scrollOffSet = minOf(
         1f,
@@ -92,6 +91,7 @@ fun MovieImage(
                     )
                 )
         )
+
         IconButton(
             onClick = {
                 onBackStack()
@@ -112,7 +112,10 @@ fun MovieImage(
 
             isMovieSaved == true -> {
                 IconButton(
-                    onClick = { onMovieDelete() },
+                    onClick = {
+                        onMovieDelete()
+                        showSnackBar("Movie is removed from favorites")
+                              },
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .padding(12.dp),

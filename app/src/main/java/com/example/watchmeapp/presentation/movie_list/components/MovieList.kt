@@ -38,7 +38,7 @@ fun MovieList(
             val lastVisibleItem = scrollState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
             val itemNumber = scrollState.layoutInfo.totalItemsCount
             Log.d("prviitem","$lastVisibleItem")
-            lastVisibleItem > itemNumber - 4 && isScrolling
+            lastVisibleItem > itemNumber - 2 && isScrolling
         }
     }
 

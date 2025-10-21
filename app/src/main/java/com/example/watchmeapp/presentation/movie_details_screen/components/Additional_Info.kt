@@ -23,6 +23,9 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.watchmeapp.ui.theme.SecondaryGreen
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+import java.util.Locale
 
 @Composable
 fun Additional_Info(
@@ -35,7 +38,6 @@ fun Additional_Info(
 ) {
     val haldScreenWidth = (LocalConfiguration.current.screenWidthDp.dp / 2)
 
-    // Naslov
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
@@ -56,7 +58,6 @@ fun Additional_Info(
 
     Spacer(modifier = Modifier.height(8.dp))
 
-    // Sadržaj
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -66,10 +67,10 @@ fun Additional_Info(
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        InfoRow(label = "💰 Budget", value = "$$budget")
+        InfoRow(label = "💰 Budget", value = if(budget == 0) "No information's" else "${budget.toFormatWithDots()}$")
         InfoRow(label = "🌍 Country", value = originCountry.joinToString(", "))
         InfoRow(label = "🗣️ Language", value = original_language.uppercase())
-        InfoRow(label = "📈 Revenue", value = "$$revenue")
+        InfoRow(label = "📈 Revenue", value = if(revenue == 0) "No information's" else "${revenue.toFormatWithDots()}$")
         InfoRow(label = "🎬 Status", value = status)
     }
 }
@@ -77,7 +78,9 @@ fun Additional_Info(
 @Composable
 private fun InfoRow(label: String, value: String) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(start = 30.dp, end = 30.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 30.dp, end = 30.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -93,4 +96,18 @@ private fun InfoRow(label: String, value: String) {
             textAlign = TextAlign.End
         )
     }
+}
+
+private fun Int.toFormatWithDots() : String {
+
+    val symbols = DecimalFormatSymbols(Locale.getDefault()).apply {
+        groupingSeparator = '.'
+        decimalSeparator = ','
+    }
+
+    val df = DecimalFormat("#,###", symbols)
+    df.maximumFractionDigits = 0
+
+    return df.format(this)
+
 }

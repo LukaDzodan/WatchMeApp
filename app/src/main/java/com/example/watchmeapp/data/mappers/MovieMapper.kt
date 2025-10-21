@@ -5,6 +5,7 @@ import com.example.watchmeapp.data.remote.dto.movie_from_query_dto.MovieFromQuer
 import com.example.watchmeapp.domain.model.movie.Movie
 
 interface MovieMapper {
+
     fun map(
         movie : MovieFromQueryDto
     ) : Movie

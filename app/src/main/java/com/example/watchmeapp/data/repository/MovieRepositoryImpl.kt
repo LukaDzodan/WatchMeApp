@@ -24,7 +24,7 @@ class MovieRepositoryImpl(
 
     override suspend fun getTradingMovies(page: Int): Resource<List<Movie>> {
         val response = remoteMovieDataSource.getTradingMovies(page)
-        Log.d("filmovi", "${response.message}")
+        Log.d("filmovi", "${response.data}")
         return when (response) {
             is Resource.Error -> Resource.Error(response.message!!)
             is Resource.Loading -> Resource.Loading()

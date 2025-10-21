@@ -9,17 +9,23 @@ import io.ktor.client.network.sockets.SocketTimeoutException
 import io.ktor.client.statement.HttpResponse
 import io.ktor.util.network.UnresolvedAddressException
 import kotlinx.coroutines.ensureActive
+import okio.IOException
+import java.net.ConnectException
 import kotlin.coroutines.coroutineContext
 
 suspend inline fun <reified T> safeCall(
-    exceute : () -> HttpResponse
+    execute : () -> HttpResponse
 ) : Resource<T> {
 
     val response = try {
-        exceute()
+        execute()
     }catch (e : SocketTimeoutException){
         return Resource.Error(NetworkError.Timeout.message)
-    }catch (e : UnresolvedAddressException) {
+    }catch (e: UnresolvedAddressException) {
+        return Resource.Error(NetworkError.NoInternet.message)
+    } catch (e: ConnectException) {
+        return Resource.Error(NetworkError.NoInternet.message)
+    } catch (e: IOException) {
         return Resource.Error(NetworkError.NoInternet.message)
     }catch (e : Exception) {
         Log.e("safeCall", "EXCEPTION: ${e::class.simpleName} - ${e.localizedMessage}")

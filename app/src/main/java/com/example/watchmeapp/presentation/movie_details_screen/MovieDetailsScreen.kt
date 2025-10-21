@@ -16,12 +16,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -35,6 +39,9 @@ import com.example.watchmeapp.presentation.movie_details_screen.components.ImdbI
 import com.example.watchmeapp.presentation.movie_details_screen.components.MovieImage
 import com.example.watchmeapp.presentation.movie_details_screen.components.ProductionCompanyList
 import com.example.watchmeapp.ui.theme.BackGroundGrey
+import com.example.watchmeapp.ui.theme.PrimaryGreen
+import com.example.watchmeapp.ui.theme.SecondaryGreen
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import kotlin.math.round
 
@@ -59,6 +66,7 @@ fun MovieDetailsScreenRoot(
 
 }
 //hendalj greske npr. ako nema slike neka fejk, ocenu zaokruzi na 1 dec, napravi bolji raspored company productiona
+
 @Composable
 fun MovieDetailsScreen(
     state: MovieDetailsState,
@@ -66,11 +74,16 @@ fun MovieDetailsScreen(
     modifier: Modifier = Modifier,
 ) {
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
     val scrollState = rememberLazyListState()
 
     if (state.isLoading) {
         Box(
-            modifier = Modifier.fillMaxSize().background(BackGroundGrey),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(BackGroundGrey),
             contentAlignment = Alignment.Center
         )
         {
@@ -93,158 +106,185 @@ fun MovieDetailsScreen(
             }
 
             else -> {
-                LazyColumn(
-                    state = scrollState,
+
+                Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(BackGroundGrey)
-                        .statusBarsPadding()
-                        .navigationBarsPadding(),
-                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    item {
-                        MovieImage(
-                            imageUrl = state.movieDetails.backdrop_path,
-                            scrollState = scrollState,
-                            onBackStack = {
-                                onAction(MovieDetailsActions.OnBackStack)
-                            },
-                            onMovieSave = {
-                                onAction(MovieDetailsActions.AddToFavouriteClick)
-                            },
-                            onMovieDelete = {
-                                onAction(MovieDetailsActions.DeleteFromFavouriteClick)
-                            },
-                            isMovieSaved = state.isMovieSaved,
-                            showSnackBar = {}
-                        )
-                    }
-                    item {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = state.movieDetails.title,
-                                style = MaterialTheme.typography.displaySmall,
-                                color = Color.Gray,
-                                textAlign = TextAlign.Center,
-                                fontFamily = FontFamily.Serif
+                    LazyColumn(
+                        state = scrollState,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(BackGroundGrey)
+                            .statusBarsPadding()
+                            .navigationBarsPadding(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        item {
+                            MovieImage(
+                                imageUrl = state.movieDetails.backdrop_path,
+                                scrollState = scrollState,
+                                onBackStack = {
+                                    onAction(MovieDetailsActions.OnBackStack)
+                                },
+                                onMovieSave = {
+                                    onAction(MovieDetailsActions.AddToFavouriteClick)
+
+                                },
+                                onMovieDelete = {
+                                    onAction(MovieDetailsActions.DeleteFromFavouriteClick)
+                                },
+                                isMovieSaved = state.isMovieSaved,
+                                showSnackBar = { message ->
+                                    scope.launch {
+                                        snackbarHostState.showSnackbar(message)
+                                    }
+                                }
+                            )
+                        }
+                        item {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                Text(
+                                    text = state.movieDetails.title,
+                                    style = MaterialTheme.typography.displaySmall,
+                                    color = Color.Gray,
+                                    textAlign = TextAlign.Center,
+                                    fontFamily = FontFamily.Serif
+                                )
+                            }
+                        }
+
+                        item {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(intrinsicSize = IntrinsicSize.Min),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceEvenly
+                            ) {
+                                Text(
+                                    text = state.movieDetails.runtime.toString() + " min",
+                                    style = MaterialTheme.typography.labelLarge,
+                                    color = Color.Gray,
+                                    textAlign = TextAlign.Center,
+                                    fontFamily = FontFamily.Serif,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Text(
+                                    text = state.movieDetails.release_date,
+                                    style = MaterialTheme.typography.labelLarge,
+                                    color = Color.Gray,
+                                    textAlign = TextAlign.Center,
+                                    fontFamily = FontFamily.Serif,
+                                    fontWeight = FontWeight.Bold
+                                )
+
+                                ImdbIcon(
+                                    vote_average = state.movieDetails.vote_average.toTwoDecimal()
+                                )
+                            }
+                        }
+                        item {
+                            Spacer(modifier = Modifier.height(4.dp))
+                        }
+                        item {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(start = 20.dp, end = 20.dp),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically
+                            )
+                            {
+                                Text(
+                                    text = state.movieDetails.overview,
+                                    style = MaterialTheme.typography.labelLarge,
+                                    color = Color.Gray,
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        }
+                        item {
+                            Spacer(modifier = Modifier.height(20.dp))
+                        }
+
+                        item {
+                            GenreList(
+                                genres = state.movieDetails.genres
+                            )
+                        }
+                        item {
+                            Spacer(modifier = Modifier.height(20.dp))
+                        }
+                        item {
+                            CastList(
+                                casts = state.movieDetails.credits.cast
+                            )
+                        }
+                        item {
+                            Spacer(modifier = Modifier.height(12.dp))
+                        }
+                        item {
+                            Additional_Info(
+                                budget = state.movieDetails.budget,
+                                originCountry = state.movieDetails.origin_country,
+                                original_language = state.movieDetails.original_language,
+                                revenue = state.movieDetails.revenue,
+                                status = state.movieDetails.status,
+                            )
+                        }
+                        item {
+                            Spacer(modifier = Modifier.height(10.dp))
+                        }
+
+                        item {
+                            ProductionCompanyList(
+                                productionCompanies = state.movieDetails.production_companies
+                            )
+                        }
+
+                        item {
+                            Spacer(modifier = Modifier.height(10.dp))
+                        }
+
+                        item {
+                            HomePage(
+                                state.movieDetails.poster_path,
+                                state.movieDetails.homepage
                             )
                         }
                     }
 
-                    item {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(intrinsicSize = IntrinsicSize.Min),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceEvenly
-                        ) {
-                            Text(
-                                text = state.movieDetails.runtime.toString() + " min",
-                                style = MaterialTheme.typography.labelLarge,
-                                color = Color.Gray,
-                                textAlign = TextAlign.Center,
-                                fontFamily = FontFamily.Serif,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Text(
-                                text = state.movieDetails.release_date,
-                                style = MaterialTheme.typography.labelLarge,
-                                color = Color.Gray,
-                                textAlign = TextAlign.Center,
-                                fontFamily = FontFamily.Serif,
-                                fontWeight = FontWeight.Bold
-                            )
-
-                            ImdbIcon(
-                                vote_average = state.movieDetails.vote_average.toTwoDecimal()
-                            )
-                        }
-                    }
-                    item {
-                        Spacer(modifier = Modifier.height(4.dp))
-                    }
-                    item {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 20.dp, end = 20.dp),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically
-                        )
-                        {
-                            Text(
-                                text = state.movieDetails.overview,
-                                style = MaterialTheme.typography.labelLarge,
-                                color = Color.Gray,
-                                textAlign = TextAlign.Center
-                            )
-                        }
-                    }
-                    item {
-                        Spacer(modifier = Modifier.height(20.dp))
-                    }
-
-                    item {
-                        GenreList(
-                            genres = state.movieDetails.genres
+                    SnackbarHost(
+                        hostState = snackbarHostState,
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .padding(bottom = 60.dp)
+                    ) {data ->
+                        Snackbar(
+                            snackbarData = data,
+                            containerColor = SecondaryGreen.copy(alpha = 0.95f),
+                            contentColor = Color.White,
+                            shape = MaterialTheme.shapes.medium,
+                            actionColor = Color.Black,
                         )
                     }
-                    item {
-                        Spacer(modifier = Modifier.height(20.dp))
-                    }
-                    item {
-                        CastList(
-                            casts = state.movieDetails.credits.cast
-                        )
-                    }
-                    item {
-                        Spacer(modifier = Modifier.height(12.dp))
-                    }
-                    item {
-                        Additional_Info(
-                            budget = state.movieDetails.budget,
-                            originCountry = state.movieDetails.origin_country,
-                            original_language = state.movieDetails.original_language,
-                            revenue = state.movieDetails.revenue,
-                            status = state.movieDetails.status,
-                        )
-                    }
-                    item {
-                        Spacer(modifier = Modifier.height(10.dp))
-                    }
-
-                    item {
-                        ProductionCompanyList(
-                            productionCompanies = state.movieDetails.production_companies
-                        )
-                    }
-
-                    item {
-                        Spacer(modifier = Modifier.height(10.dp))
-                    }
-
-                    item {
-                        HomePage(
-                            state.movieDetails.poster_path ?: "",
-                            state.movieDetails.homepage
-                        )
-                    }
-
                 }
             }
         }
     }
 }
 
-fun Double.toTwoDecimal() : Double {
+fun Double.toTwoDecimal(): Double {
 
     return round(this * 10.0) / 10.0
 
 }
+
