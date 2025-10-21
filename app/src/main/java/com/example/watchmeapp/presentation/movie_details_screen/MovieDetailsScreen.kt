@@ -138,6 +138,7 @@ fun MovieDetailsScreen(
                                 isMovieSaved = state.isMovieSaved,
                                 showSnackBar = { message ->
                                     scope.launch {
+                                        snackbarHostState.currentSnackbarData?.dismiss()
                                         snackbarHostState.showSnackbar(message)
                                     }
                                 }
@@ -270,7 +271,7 @@ fun MovieDetailsScreen(
                     ) {data ->
                         Snackbar(
                             snackbarData = data,
-                            containerColor = SecondaryGreen.copy(alpha = 0.95f),
+                            containerColor = SecondaryGreen,
                             contentColor = Color.White,
                             shape = MaterialTheme.shapes.medium,
                             actionColor = Color.Black,

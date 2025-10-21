@@ -85,10 +85,12 @@ fun MovieListItem(
                 textAlign = TextAlign.Center,
                 color = Color.Gray,
                 text = movie.title,
-                style = MaterialTheme.typography.labelLarge,
+                style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier
                     .fillMaxWidth()
             )
         }
+
+
     }
 }
