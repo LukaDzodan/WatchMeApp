@@ -2,7 +2,6 @@ package com.example.watchmeapp.di
 
 import androidx.room.Room
 import com.example.watchmeapp.data.local.MovieDataBase
-import com.example.watchmeapp.data.local.dao.MovieDao
 import com.example.watchmeapp.data.mappers.MovieDetailsMapper
 import com.example.watchmeapp.data.mappers.MovieDetailsMapperImpl
 import com.example.watchmeapp.data.mappers.MovieMapper
@@ -14,7 +13,7 @@ import com.example.watchmeapp.data.remote.network.RemoteMovieDataSource
 import com.example.watchmeapp.data.repository.MovieRepositoryImpl
 import com.example.watchmeapp.domain.repository.MovieRepository
 import com.example.watchmeapp.presentation.movie_details_screen.MovieDetailsViewModel
-import com.example.watchmeapp.presentation.movie_list.MovieListViewModel
+import com.example.watchmeapp.presentation.movie_list_screen.MovieListViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.HttpTimeout

@@ -8,18 +8,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.datasource.LoremIpsum
-import com.example.watchmeapp.domain.model.movie.Movie
 import com.example.watchmeapp.domain.model.movie_details.Cast
 import com.example.watchmeapp.domain.model.movie_details.Credits
 import com.example.watchmeapp.domain.model.movie_details.Genre
 import com.example.watchmeapp.domain.model.movie_details.MovieDetails
 import com.example.watchmeapp.domain.model.movie_details.ProductionCompany
-import com.example.watchmeapp.presentation.movie_details_screen.MovieDetailsScreen
-import com.example.watchmeapp.presentation.movie_list.MovieListScreen
-import com.example.watchmeapp.presentation.movie_list.MovieListState
-import com.example.watchmeapp.presentation.movie_list.components.MovieListItem
-import com.example.watchmeapp.presentation.movie_list.components.MovieSearchBar
+import com.example.watchmeapp.presentation.movie_list_screen.components.MovieSearchBar
 
 
 //@Preview

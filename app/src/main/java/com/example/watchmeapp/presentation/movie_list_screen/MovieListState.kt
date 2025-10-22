@@ -1,4 +1,4 @@
-package com.example.watchmeapp.presentation.movie_list
+package com.example.watchmeapp.presentation.movie_list_screen
 
 import com.example.watchmeapp.domain.model.movie.Movie
 

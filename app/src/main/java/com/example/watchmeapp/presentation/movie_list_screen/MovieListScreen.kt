@@ -1,4 +1,4 @@
-package com.example.watchmeapp.presentation.movie_list
+package com.example.watchmeapp.presentation.movie_list_screen
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
@@ -29,8 +29,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.watchmeapp.domain.model.movie.Movie
-import com.example.watchmeapp.presentation.movie_list.components.MovieList
-import com.example.watchmeapp.presentation.movie_list.components.MovieSearchBar
+import com.example.watchmeapp.presentation.movie_list_screen.components.MovieList
+import com.example.watchmeapp.presentation.movie_list_screen.components.MovieSearchBar
 import com.example.watchmeapp.ui.theme.BackGroundGrey
 import com.example.watchmeapp.ui.theme.SecondaryGreen
 import org.koin.androidx.compose.koinViewModel
