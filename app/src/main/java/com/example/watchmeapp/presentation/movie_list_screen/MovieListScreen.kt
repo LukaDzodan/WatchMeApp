@@ -35,7 +35,6 @@ import com.example.watchmeapp.ui.theme.BackGroundGrey
 import com.example.watchmeapp.ui.theme.SecondaryGreen
 import org.koin.androidx.compose.koinViewModel
 
-
 @SuppressLint("FrequentlyChangingValue")
 @Composable
 fun MovieListScreenRoot(
@@ -44,52 +43,23 @@ fun MovieListScreenRoot(
 ) {
     val state by viewModel.state.collectAsState()
 
-    val trendingMovieScrollState = rememberLazyGridState(
-        initialFirstVisibleItemIndex = viewModel.trendingScrollIndex,
-        initialFirstVisibleItemScrollOffset = viewModel.trendingScrollOffset
-    )
-
-    val favoriteMovieScrollState = rememberLazyGridState(
-        initialFirstVisibleItemIndex = viewModel.favoriteScrollIndex,
-        initialFirstVisibleItemScrollOffset = viewModel.favoriteScrollOffset
-    )
-
-    LaunchedEffect(
-        trendingMovieScrollState.firstVisibleItemIndex,
-        trendingMovieScrollState.firstVisibleItemScrollOffset
-    ) {
-        viewModel.saveTrendingScrollState(trendingMovieScrollState)
-    }
-
-    LaunchedEffect(
-        favoriteMovieScrollState.firstVisibleItemIndex,
-        favoriteMovieScrollState.firstVisibleItemScrollOffset
-    ) {
-        viewModel.saveFavoriteScrollState(favoriteMovieScrollState)
-    }
-
-
     MovieListScreen(
-        state = state,
-        onActions = { action ->
+        state = state, onActions = { action ->
             when (action) {
                 is MovieListActions.OnMovieClick -> onMovieClick(action.movie, action.isSaved)
                 else -> Unit
             }
             viewModel.onAction(action)
-        },
-        trendingMovieScrollState = trendingMovieScrollState,
-        favoriteMovieScrollState = favoriteMovieScrollState
-    )
+        })
 }
 
 @Composable
 fun MovieListScreen(
-    state: MovieListState,
-    onActions: (MovieListActions) -> Unit,
-    trendingMovieScrollState: LazyGridState,
-    favoriteMovieScrollState: LazyGridState,
+    state: MovieListState, onActions: (MovieListActions) -> Unit
 ) {
+
+    val trendingMovieScrollState = rememberLazyGridState()
+    val favoriteMovieScrollState = rememberLazyGridState()
 
     val keyBoardController = LocalSoftwareKeyboardController.current
 
@@ -111,15 +81,11 @@ fun MovieListScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        MovieSearchBar(
-            searchQuery = state.query,
-            onSearchQueryChange = { query ->
-                onActions(MovieListActions.OnSearchQueryChange(query))
-            },
-            onImeSearch = {
-                keyBoardController?.hide()
-            }
-        )
+        MovieSearchBar(searchQuery = state.query, onSearchQueryChange = { query ->
+            onActions(MovieListActions.OnSearchQueryChange(query))
+        }, onImeSearch = {
+            keyBoardController?.hide()
+        })
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
@@ -127,8 +93,7 @@ fun MovieListScreen(
 
             PrimaryTabRow(
                 selectedTabIndex = state.selectedTabIndex,
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 containerColor = BackGroundGrey,
                 indicator = {
                     TabRowDefaults.SecondaryIndicator(
@@ -136,16 +101,12 @@ fun MovieListScreen(
                             .tabIndicatorOffset(state.selectedTabIndex)
                             .fillMaxWidth()
                     )
-                }
-            ) {
+                }) {
 
                 Tab(
-                    selected = state.selectedTabIndex == 0,
-                    onClick = {
+                    selected = state.selectedTabIndex == 0, onClick = {
                         onActions(MovieListActions.OnTabSelected(0))
-                    },
-                    modifier = Modifier
-                        .padding(8.dp)
+                    }, modifier = Modifier.padding(8.dp)
                 ) {
                     Text(
                         text = "Trending movies",
@@ -155,12 +116,9 @@ fun MovieListScreen(
                 }
 
                 Tab(
-                    selected = state.selectedTabIndex == 1,
-                    onClick = {
+                    selected = state.selectedTabIndex == 1, onClick = {
                         onActions(MovieListActions.OnTabSelected(1))
-                    },
-                    modifier = Modifier
-                        .padding(8.dp)
+                    }, modifier = Modifier.padding(8.dp)
                 ) {
                     Text(
                         text = "Favorites",
@@ -179,49 +137,44 @@ fun MovieListScreen(
                 beyondViewportPageCount = 1
             ) { pageIndex ->
                 Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
+                    modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
                 ) {
                     when (pageIndex) {
                         0 -> {
-                            if (state.isLoading) {
-                                CircularProgressIndicator()
-                            } else {
-                                when {
-                                    state.errorMessage.isNotEmpty() -> {
-                                        Text(
-                                            text = state.errorMessage,
-                                            style = MaterialTheme.typography.headlineSmall,
-                                            color = Color.Gray,
-                                            textAlign = TextAlign.Center,
-                                            modifier = Modifier.padding(12.dp)
-                                        )
-                                    }
+                            when {
+                                state.errorMessage.isNotEmpty() -> {
+                                    Text(
+                                        text = state.errorMessage,
+                                        style = MaterialTheme.typography.headlineSmall,
+                                        color = Color.Gray,
+                                        textAlign = TextAlign.Center,
+                                        modifier = Modifier.padding(12.dp)
+                                    )
+                                }
 
-                                    else -> {
+                                else -> {
 
-                                        MovieList(
-                                            movies = state.movies,
-                                            onMovieClick = { movie ->
-                                                onActions(
-                                                    MovieListActions.OnMovieClick(
-                                                        movie,
-                                                        state.favouriteMovies.any {
-                                                            it.id == movie.id
-                                                        })
-                                                )
-                                            },
-                                            loadMore = {
-                                                onActions(MovieListActions.LoadMoreMovies)
-                                            },
-                                            scrollState = trendingMovieScrollState
-                                        )
-                                    }
+                                    MovieList(
+                                        movies = state.movies,
+                                        onMovieClick = { movie ->
+                                            onActions(
+                                                MovieListActions.OnMovieClick(
+                                                    movie, state.favouriteMovies.any {
+                                                        it.id == movie.id
+                                                    })
+                                            )
+                                        },
+                                        loadMore = {
+                                            onActions(MovieListActions.LoadMoreMovies)
+                                        },
+                                        scrollState = trendingMovieScrollState,
+                                        isLoading = state.isLoading
+                                    )
+                                }
 
 // vidi kako da resis scrollState i pocni sa Roomom
-                                }
                             }
+
                         }
 
                         1 -> {
@@ -242,14 +195,14 @@ fun MovieListScreen(
                                         onMovieClick = { movie ->
                                             onActions(
                                                 MovieListActions.OnMovieClick(
-                                                    movie,
-                                                    state.favouriteMovies.any {
+                                                    movie, state.favouriteMovies.any {
                                                         it.id == movie.id
                                                     })
                                             )
                                         },
                                         loadMore = {},
-                                        scrollState = favoriteMovieScrollState
+                                        scrollState = favoriteMovieScrollState,
+                                        isLoading = false
                                     )
                                 }
 

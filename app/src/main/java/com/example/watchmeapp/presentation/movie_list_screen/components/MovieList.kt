@@ -1,6 +1,7 @@
 package com.example.watchmeapp.presentation.movie_list_screen.components
 
 import android.util.Log
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,6 +10,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -23,12 +25,12 @@ import com.example.watchmeapp.domain.model.movie.Movie
 @Composable
 fun MovieList(
     movies : List<Movie>,
+    isLoading: Boolean = false,
     onMovieClick : (Movie) -> Unit,
     loadMore : () -> Unit,
     modifier: Modifier = Modifier,
     scrollState : LazyGridState
 ) {
-    Log.d("MovieList", "$movies")
 
     var isScrolling by remember { mutableStateOf(false) }
 
