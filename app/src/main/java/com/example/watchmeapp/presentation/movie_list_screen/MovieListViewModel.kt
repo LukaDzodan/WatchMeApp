@@ -1,14 +1,11 @@
 package com.example.watchmeapp.presentation.movie_list_screen
 
-import androidx.compose.foundation.lazy.grid.LazyGridState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.watchmeapp.common.Resource
 import com.example.watchmeapp.domain.repository.MovieRepository
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
@@ -28,20 +25,6 @@ class MovieListViewModel(
 
     private var trandingMoviePage = 1
     private var movieFromQueryPage = 1
-
-
-    var trendingScrollIndex by mutableIntStateOf(0)
-        private set
-
-    var trendingScrollOffset by mutableIntStateOf(0)
-        private set
-
-    var favoriteScrollIndex by mutableIntStateOf(0)
-        private set
-
-    var favoriteScrollOffset by mutableIntStateOf(0)
-        private set
-
 
     var job: Job? = null
 
@@ -64,7 +47,7 @@ class MovieListViewModel(
                             movies = emptyList()
                         )
                     }
-                    job = getTradingMovies()
+                    job = getTrendingMovies()
                 } else {
                     movieFromQueryPage = 1
                     _state.update {
@@ -82,11 +65,6 @@ class MovieListViewModel(
     fun onAction(action: MovieListActions) {
 
         when (action) {
-
-            is MovieListActions.OnMovieClick -> {
-
-            }
-
             is MovieListActions.OnSearchQueryChange -> {
                 _state.update {
                     it.copy(
@@ -106,12 +84,14 @@ class MovieListViewModel(
             is MovieListActions.LoadMoreMovies -> {
                 if (_state.value.query.isEmpty()) {
                     trandingMoviePage++
-                    getTradingMovies()
+                    getTrendingMovies()
                 } else {
                     movieFromQueryPage++
                     getMoviesFromQuery(_state.value.query)
                 }
             }
+
+            else -> Unit
         }
     }
 
@@ -129,7 +109,7 @@ class MovieListViewModel(
 
     }
 
-    fun getTradingMovies() = viewModelScope.launch {
+    fun getTrendingMovies() = viewModelScope.launch {
 
         _state.update {
             it.copy(
@@ -148,6 +128,7 @@ class MovieListViewModel(
             }
 
             is Resource.Success<*> -> {
+                delay(2000L)
                 _state.update {
                     it.copy(
                         isLoading = false,
@@ -208,15 +189,4 @@ class MovieListViewModel(
             else -> Unit
         }
     }
-
-    fun saveTrendingScrollState(state: LazyGridState) {
-        trendingScrollIndex = state.firstVisibleItemIndex
-        trendingScrollOffset = state.firstVisibleItemScrollOffset
-    }
-
-    fun saveFavoriteScrollState(state: LazyGridState) {
-        favoriteScrollIndex = state.firstVisibleItemIndex
-        favoriteScrollOffset = state.firstVisibleItemScrollOffset
-    }
-
 }

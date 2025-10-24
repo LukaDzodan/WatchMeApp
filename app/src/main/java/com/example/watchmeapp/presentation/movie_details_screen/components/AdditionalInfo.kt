@@ -28,7 +28,7 @@ import java.text.DecimalFormatSymbols
 import java.util.Locale
 
 @Composable
-fun Additional_Info(
+fun AdditionalInfo(
     budget: Int,
     originCountry: List<String>,
     original_language: String,

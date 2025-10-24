@@ -25,13 +25,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.watchmeapp.presentation.movie_details_screen.components.Additional_Info
+import com.example.watchmeapp.presentation.movie_details_screen.components.AdditionalInfo
 import com.example.watchmeapp.presentation.movie_details_screen.components.CastList
 import com.example.watchmeapp.presentation.movie_details_screen.components.GenreList
 import com.example.watchmeapp.presentation.movie_details_screen.components.HomePage
@@ -39,7 +38,6 @@ import com.example.watchmeapp.presentation.movie_details_screen.components.ImdbI
 import com.example.watchmeapp.presentation.movie_details_screen.components.MovieImage
 import com.example.watchmeapp.presentation.movie_details_screen.components.ProductionCompanyList
 import com.example.watchmeapp.ui.theme.BackGroundGrey
-import com.example.watchmeapp.ui.theme.PrimaryGreen
 import com.example.watchmeapp.ui.theme.SecondaryGreen
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -65,7 +63,7 @@ fun MovieDetailsScreenRoot(
     )
 
 }
-//hendalj greske npr. ako nema slike neka fejk, ocenu zaokruzi na 1 dec, napravi bolji raspored company productiona
+// TODO: hendalj greske npr. ako nema slike neka fejk, ocenu zaokruzi na 1 dec, napravi bolji raspored company productiona
 
 @Composable
 fun MovieDetailsScreen(
@@ -73,6 +71,7 @@ fun MovieDetailsScreen(
     onAction: (MovieDetailsActions) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -233,7 +232,7 @@ fun MovieDetailsScreen(
                             Spacer(modifier = Modifier.height(12.dp))
                         }
                         item {
-                            Additional_Info(
+                            AdditionalInfo(
                                 budget = state.movieDetails.budget,
                                 originCountry = state.movieDetails.origin_country,
                                 original_language = state.movieDetails.original_language,
@@ -268,7 +267,7 @@ fun MovieDetailsScreen(
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
                             .padding(bottom = 60.dp)
-                    ) {data ->
+                    ) { data ->
                         Snackbar(
                             snackbarData = data,
                             containerColor = SecondaryGreen,
