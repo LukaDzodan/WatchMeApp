@@ -1,4 +1,4 @@
-package com.example.watchmeapp.data.remote.dto.movie_details_dto1
+package com.example.watchmeapp.data.remote.dto.movie_details_dto
 
 import kotlinx.serialization.Serializable
 

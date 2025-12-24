@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.watchmeapp.common.Resource
 import com.example.watchmeapp.domain.repository.MovieRepository
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
@@ -23,7 +22,7 @@ class MovieListViewModel(
     private val _state = MutableStateFlow(MovieListState())
     val state = _state.asStateFlow()
 
-    private var trandingMoviePage = 1
+    private var trendingMoviePage = 1
     private var movieFromQueryPage = 1
 
     var job: Job? = null
@@ -41,7 +40,7 @@ class MovieListViewModel(
             .onEach { query ->
                 job?.cancel()
                 if (query.isBlank()) {
-                    trandingMoviePage = 1
+                    trendingMoviePage = 1
                     _state.update {
                         it.copy(
                             movies = emptyList()
@@ -83,7 +82,7 @@ class MovieListViewModel(
 
             is MovieListActions.LoadMoreMovies -> {
                 if (_state.value.query.isEmpty()) {
-                    trandingMoviePage++
+                    trendingMoviePage++
                     getTrendingMovies()
                 } else {
                     movieFromQueryPage++
@@ -117,7 +116,7 @@ class MovieListViewModel(
                 errorMessage = ""
             )
         }
-        when (val response = repository.getTradingMovies(trandingMoviePage)) {
+        when (val response = repository.getTradingMovies(trendingMoviePage)) {
             is Resource.Error<*> -> {
                 _state.update {
                     it.copy(
@@ -128,7 +127,6 @@ class MovieListViewModel(
             }
 
             is Resource.Success<*> -> {
-                delay(2000L)
                 _state.update {
                     it.copy(
                         isLoading = false,

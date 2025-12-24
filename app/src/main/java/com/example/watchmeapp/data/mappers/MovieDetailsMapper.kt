@@ -1,10 +1,10 @@
 package com.example.watchmeapp.data.mappers
 
-import com.example.watchmeapp.data.remote.dto.movie_details_dto1.CastDto
-import com.example.watchmeapp.data.remote.dto.movie_details_dto1.CreditsDto
-import com.example.watchmeapp.data.remote.dto.movie_details_dto1.GenreDto
-import com.example.watchmeapp.data.remote.dto.movie_details_dto1.MovieDetailsDto
-import com.example.watchmeapp.data.remote.dto.movie_details_dto1.ProductionCompanyDto
+import com.example.watchmeapp.data.remote.dto.movie_details_dto.CastDto
+import com.example.watchmeapp.data.remote.dto.movie_details_dto.CreditsDto
+import com.example.watchmeapp.data.remote.dto.movie_details_dto.GenreDto
+import com.example.watchmeapp.data.remote.dto.movie_details_dto.MovieDetailsDto
+import com.example.watchmeapp.data.remote.dto.movie_details_dto.ProductionCompanyDto
 import com.example.watchmeapp.domain.model.movie_details.Cast
 import com.example.watchmeapp.domain.model.movie_details.Credits
 import com.example.watchmeapp.domain.model.movie_details.Genre

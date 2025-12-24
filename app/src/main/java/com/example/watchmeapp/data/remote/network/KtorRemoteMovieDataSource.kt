@@ -1,10 +1,9 @@
 package com.example.watchmeapp.data.remote.network
 
-import androidx.compose.ui.graphics.vector.addPathNodes
 import com.example.watchmeapp.common.Constants
 import com.example.watchmeapp.common.Resource
-import com.example.watchmeapp.data.remote.dto.movie_details_dto1.MovieDetailsDto
-import com.example.watchmeapp.data.remote.dto.movie_from_query_dto.MovieFromQeuryResponse
+import com.example.watchmeapp.data.remote.dto.movie_details_dto.MovieDetailsDto
+import com.example.watchmeapp.data.remote.dto.movie_from_query_dto.MovieFromQueryResponse
 import com.example.watchmeapp.data.remote.dto.tranding_movies_dto.TradingMoviesResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
@@ -34,7 +33,7 @@ class KtorRemoteMovieDataSource(
     override suspend fun getMovieFromQuery(
         page: Int,
         query: String
-    ): Resource<MovieFromQeuryResponse> {
+    ): Resource<MovieFromQueryResponse> {
         return safeCall {
             httpClient.get(
                 urlString = "https://api.themoviedb.org/3/search/movie"

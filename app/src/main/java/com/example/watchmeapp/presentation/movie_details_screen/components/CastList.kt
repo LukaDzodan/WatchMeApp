@@ -1,8 +1,6 @@
 package com.example.watchmeapp.presentation.movie_details_screen.components
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,12 +8,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -31,15 +26,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import coil3.ImageLoader
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.example.watchmeapp.domain.model.movie_details.Cast
-import com.example.watchmeapp.ui.theme.PrimaryGreen
 import com.example.watchmeapp.ui.theme.SecondaryGreen
 
 @Composable
@@ -47,7 +39,7 @@ fun CastList(
     casts : List<Cast>,
 ) {
 
-    val haldScreenWidth = (LocalConfiguration.current.screenWidthDp.dp/2)
+    val halfScreenWidth = (LocalConfiguration.current.screenWidthDp.dp/2)
 
     Row(
         modifier = Modifier
@@ -64,7 +56,7 @@ fun CastList(
     }
     HorizontalDivider(
         modifier = Modifier
-            .width(haldScreenWidth)
+            .width(halfScreenWidth)
         ,
         thickness = 2.dp,
         color = SecondaryGreen
@@ -102,7 +94,7 @@ fun CastList(
                             .size(50.dp)
                             .clip(RoundedCornerShape(50)),
                         model = ImageRequest.Builder(LocalContext.current)
-                            .data("https://image.tmdb.org/t/p/w500"+cast.profile_path)
+                            .data(cast.profile_path)
                             .crossfade(true)
                             .build(),
                         contentDescription = null,

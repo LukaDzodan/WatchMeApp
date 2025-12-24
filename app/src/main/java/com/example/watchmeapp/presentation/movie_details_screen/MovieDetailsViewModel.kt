@@ -1,5 +1,6 @@
 package com.example.watchmeapp.presentation.movie_details_screen
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
@@ -38,6 +39,7 @@ class MovieDetailsViewModel(
             }
 
             MovieDetailsActions.AddToFavouriteClick -> {
+                Log.d("cao","cao")
                 viewModelScope.launch {
                     repository.insertFavoriteMovie(
                         with(_state.value.movieDetails) {

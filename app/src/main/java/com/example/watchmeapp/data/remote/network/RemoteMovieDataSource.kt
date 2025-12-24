@@ -1,8 +1,8 @@
 package com.example.watchmeapp.data.remote.network
 
 import com.example.watchmeapp.common.Resource
-import com.example.watchmeapp.data.remote.dto.movie_details_dto1.MovieDetailsDto
-import com.example.watchmeapp.data.remote.dto.movie_from_query_dto.MovieFromQeuryResponse
+import com.example.watchmeapp.data.remote.dto.movie_details_dto.MovieDetailsDto
+import com.example.watchmeapp.data.remote.dto.movie_from_query_dto.MovieFromQueryResponse
 import com.example.watchmeapp.data.remote.dto.tranding_movies_dto.TradingMoviesResponse
 
 interface RemoteMovieDataSource {
@@ -14,7 +14,7 @@ interface RemoteMovieDataSource {
     suspend fun getMovieFromQuery(
         page: Int,
         query : String,
-    ) : Resource<MovieFromQeuryResponse>
+    ) : Resource<MovieFromQueryResponse>
 
     suspend fun getMovieDetails(
         movieId : Int,
